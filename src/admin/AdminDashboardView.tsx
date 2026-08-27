@@ -70,7 +70,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
           <button onClick={() => { setActiveNav('Orders'); document.getElementById('admin-orders')?.scrollIntoView({ behavior: 'smooth' }); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
             <ShoppingCart className="w-4 h-4 text-white/60" /><span>Order Management</span>
           </button>
-          <button onClick={() => { setActiveNav('Orders'); document.getElementById('admin-orders')?.scrollIntoView({ behavior: 'smooth' }); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+          <button onClick={() => onNavigate('admin-all-products')} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
             <Package className="w-4 h-4 text-white/60" /><span>All Products</span>
           </button>
         </nav>

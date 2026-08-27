@@ -6,6 +6,7 @@ export const screenToPath: Record<ScreenType, string> = {
   checkout: '/checkout',
   orders: '/orders',
   'admin-dashboard': '/admin',
+  'admin-all-products': '/admin/all_products',
   'admin-create-product': '/admin/create-product',
   'auth-login': '/login',
 };

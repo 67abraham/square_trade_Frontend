@@ -5,6 +5,7 @@ import { MarketplacePage } from './routes/MarketplacePage';
 import { ProductDetailPage } from './routes/ProductDetailPage';
 import { CheckoutPage } from './routes/CheckoutPage';
 import { AdminDashboardPage } from './routes/AdminDashboardPage';
+import { AdminAllProductsPage } from './routes/AdminAllProductsPage';
 import { CreateProductPage } from './routes/CreateProductPage';
 import { AuthLoginPage } from './routes/AuthLoginPage';
 import { OrdersPage } from './routes/OrdersPage';
@@ -25,6 +26,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
+        <Route path="/admin/all_products" element={<AdminAllProductsPage />} />
         <Route path="/admin/create-product" element={<CreateProductPage />} />
         <Route path="/login" element={<AuthLoginPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

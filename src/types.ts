@@ -4,6 +4,7 @@ export type ScreenType =
   | 'checkout'
   | 'orders'
   | 'admin-dashboard'
+  | 'admin-all-products'
   | 'admin-create-product'
   | 'auth-login';
 
