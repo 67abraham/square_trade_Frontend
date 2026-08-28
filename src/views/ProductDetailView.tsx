@@ -76,6 +76,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
   return (
     <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-12 py-6 md:py-8 font-inter">
+      <button type="button" onClick={() => onNavigate('marketplace')} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#0051d5] hover:underline">← Back</button>
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex items-center text-sm text-[#45464d] mb-6">
         <ol className="inline-flex items-center space-x-1 md:space-x-2">

@@ -23,5 +23,6 @@ export const AdminDashboardPage: React.FC = () => {
     onRefresh={refreshOrders}
     onUpdateOrderStatus={async (id, status) => { await updateOrderStatus(id, status); await refreshOrders(); }}
     onNavigate={onNavigate}
+    onSelectOrder={(id) => navigate(`/admin/orders/${id}`)}
   />;
 };

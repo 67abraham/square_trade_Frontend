@@ -21,7 +21,7 @@ interface AppContextValue {
   updateQuantity: (cartItem: CartItem, delta: number) => Promise<void>;
   removeFromCart: (cartItem: CartItem) => Promise<void>;
   saveDeliveryInfo: (info: DeliveryInfo) => Promise<void>;
-  placeOrder: () => Promise<void>;
+  placeOrder: (shippingMethod: import('../types').ShippingMethod) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -156,18 +156,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addToCart = async (product: Product, quantity = 1, selectedColor?: string, selectedSize?: string): Promise<void> => {
     const safeQuantity = Math.max(product.minimumOrder ?? 1, quantity);
-    if (!session) {
-      setCartItems(prev => {
-        const existing = prev.find(item => item.product.id === product.id && item.selectedColor === selectedColor && item.selectedSize === selectedSize);
-        const next = existing ? prev.map(item => item === existing ? { ...item, quantity: item.quantity + safeQuantity } : item) : [...prev, { product, quantity: safeQuantity, selectedColor, selectedSize }];
-        guestCartRef.current = next;
-        return next;
-      });
-      setIsCartOpen(true); return;
+    const existing = cartItems.find(item => item.product.id === product.id && item.selectedColor === selectedColor && item.selectedSize === selectedSize);
+    const optimistic = existing
+      ? cartItems.map(item => item === existing ? { ...item, quantity: item.quantity + safeQuantity } : item)
+      : [...cartItems, { product, quantity: safeQuantity, selectedColor, selectedSize }];
+    setCartItems(optimistic);
+    if (!session) { guestCartRef.current = optimistic; return; }
+    try {
+      await createCartItem(product.id, safeQuantity, selectedColor, selectedSize);
+      await refreshCart();
+    } catch (error) {
+      await refreshCart();
+      throw error;
     }
-    await createCartItem(product.id, safeQuantity, selectedColor, selectedSize);
-    await refreshCart();
-    setIsCartOpen(true);
   };
 
   const updateQuantity = async (item: CartItem, delta: number) => {
@@ -207,14 +208,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setDeliveryInfo(normalized); setIsEditDeliveryOpen(false);
   };
 
-  const placeOrder = async () => {
+  const placeOrder = async (shippingMethod: import('../types').ShippingMethod) => {
     if (!session) throw new Error('Please sign in before placing an order');
     if (!cartItems.length) throw new Error('Your cart is empty');
     if (cartItems.some(item => item.product.status === 'NOT_AVAILABLE' || item.product.inStock === false)) throw new Error('One or more products in your cart are no longer available. Please remove them before placing the order');
     if (!deliveryInfo.name.trim() || !deliveryInfo.address.trim() || !deliveryInfo.city.trim() || !deliveryInfo.zipCode.trim() || !deliveryInfo.mobile.trim()) throw new Error('Please add your complete delivery information before placing the order');
     const ids = cartItems.map(item => item.id).filter((id): id is string => Boolean(id));
     if (ids.length !== cartItems.length) throw new Error('Cart is not synchronized with the server');
-    const order = await createOrder(ids, 'WHATSAPP');
+    const order = await createOrder(ids, shippingMethod);
     setLastOrder({ orderNumber: order.orderNumber, totalAmount: order.totalAmount });
     setIsOrderSuccessOpen(true); await refreshCart(); await refreshOrders();
   };

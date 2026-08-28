@@ -83,8 +83,8 @@ export const TopNav: React.FC<TopNavProps> = ({
               className="flex items-center gap-2 text-[#45464d] hover:text-[#0051d5] transition-colors p-2 rounded-lg relative hover:bg-[#f2f4f6]"
               title="View Shopping Cart"
             >
-              <ShoppingCart className="w-5 h-5" />
-              <span className="hidden xl:inline font-inter font-semibold text-sm">Cart</span>
+              <ShoppingCart className="w-5 h-5 text-[#FA9D1B]" />
+              <span className="hidden xl:inline font-inter font-semibold text-sm text-[#FA9D1B]">Cart</span>
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#0051d5] text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-xs">
                   {cartCount}

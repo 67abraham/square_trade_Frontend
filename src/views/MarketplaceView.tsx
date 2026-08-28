@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product, ScreenType, Category, CategoryType } from '../types';
+import { Product, Category, CategoryType } from '../types';
 import { Pagination } from '../components/Pagination';
 import { 
   Headphones, 
@@ -21,7 +21,6 @@ interface MarketplaceViewProps {
   categories: Category[];
   onSelectProduct: (product: Product) => void;
   onAddToCart: (product: Product) => Promise<void>;
-  onNavigate: (screen: ScreenType) => void;
   searchQuery: string;
 }
 
@@ -30,7 +29,6 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
   categories,
   onSelectProduct,
   onAddToCart,
-  onNavigate,
   searchQuery
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'All'>('All');
@@ -195,7 +193,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                   isSelected ? 'bg-[#316bf3] text-white shadow-md' : 'bg-[#eceef0] text-[#0051d5]'
                 }`}>
                   {React.cloneElement(cat.icon as React.ReactElement<{ className?: string }>, {
-                    className: isSelected ? 'w-6 h-6 md:w-7 md:h-7 text-white' : 'w-6 h-6 md:w-7 md:h-7 text-[#0051d5]'
+                    className: isSelected ? 'w-6 h-6 md:w-7 md:h-7 text-white' : 'w-6 h-6 md:w-7 md:h-7 text-[#FA9D1B]'
                   })}
                 </div>
                 <span className={`text-xs md:text-sm font-medium ${
@@ -214,13 +212,13 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
         <div className="relative">
           <select
             value={priceFilter}
-            onChange={(e) => setPriceFilter(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriceFilter(e.target.value as typeof priceFilter)} //check here
             className="px-4 py-2 border border-[#c6c6cd] rounded-full text-sm font-semibold text-[#191c1e] hover:bg-[#f2f4f6] bg-transparent appearance-none pr-8 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#0051d5]"
           >
             <option value="all">Price: All</option>
-            <option value="under100">Under $100</option>
-            <option value="100to300">$100 - $300</option>
-            <option value="above300">Above $300</option>
+            <option value="under100">Under $10</option>
+            <option value="100to300">$10 - $50</option>
+            <option value="above300">Above $50</option>
           </select>
           <ChevronDown className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#76777d] pointer-events-none" />
         </div>
@@ -346,7 +344,12 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                             </div>
 
                             <p className="text-xs text-[#76777d] mt-1 line-clamp-1">
-                              {product.subDescription || product.brand}
+                              {product.description}
+                              {product.brand}
+                            </p>
+                            <p className="text-xs text-[#76777d] mt-1 line-clamp-1">
+
+                              {product.brand}
                             </p>
 
 
@@ -358,7 +361,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.96 }}
                             onClick={(e) => handleAddToCart(product, e)}
-                            className={`mt-3 md:mt-4 w-full px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all flex items-center justify-center gap-1.5 shadow-xs ${
+                            className={`mt-3 md:mt-4 w-full px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all flex items-center justify-center gap-1.5 text-white shadow-xs bg-[#0051d5] hover:bg-blue-600 ${
                               isJustAdded
                                 ? 'bg-emerald-600 text-white'
                                 : 'border border-[#c6c6cd] text-[#191c1e] hover:bg-[#f2f4f6]'
@@ -366,12 +369,12 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                           >
                             {isJustAdded ? (
                               <>
-                                <Check className="w-4 h-4" />
+                                <Check className="w-4 h-4 " />
                                 <span>Added to Cart</span>
                               </>
                             ) : (
                               <>
-                                <ShoppingCart className="w-3.5 h-3.5" />
+                                <ShoppingCart className="w-3.5 h-3.5 text-[#FA9D1B]" />
                                 <span>Add to Cart</span>
                               </>
                             )}

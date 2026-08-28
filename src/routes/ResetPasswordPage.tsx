@@ -31,6 +31,7 @@ export const ResetPasswordPage: React.FC = () => {
   return (
     <main className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4 py-12 font-inter">
       <section className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-7">
+        <button type="button" onClick={() => navigate(-1)} className="mb-4 text-sm font-semibold text-blue-700 hover:underline">← Back</button>
         <div className="flex justify-center mb-6"><BrandLogo variant="full" theme="light" size="lg" /></div>
         {success ? (
           <div className="text-center">

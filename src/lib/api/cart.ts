@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { DeliveryInfo, Product } from '../../types';
+import type { Product } from '../../types';
 
 interface BackendCartItem {
   id: string;

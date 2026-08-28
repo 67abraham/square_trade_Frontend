@@ -94,7 +94,7 @@ export const CreateProductView: React.FC<CreateProductViewProps> = ({
       };
       await onAddProduct(product);
       setIsSavedToast(true);
-      setTimeout(() => { setIsSavedToast(false); onNavigate('marketplace'); }, 900);
+      setTimeout(() => { setIsSavedToast(false); onNavigate('admin-all-products'); }, 900);
     } catch (err) { setError(err instanceof Error ? err.message : 'Unable to create product'); }
   };
 
@@ -110,7 +110,7 @@ export const CreateProductView: React.FC<CreateProductViewProps> = ({
           {/* Logo */}
           <div className="mb-8 px-2">
             <button
-              onClick={() => onNavigate('marketplace')}
+              onClick={() => onNavigate('admin-dashboard')}
               className="flex items-center text-left cursor-pointer hover:opacity-90 transition-opacity"
               title="Return to Marketplace"
             >
@@ -384,7 +384,7 @@ export const CreateProductView: React.FC<CreateProductViewProps> = ({
           <div className="max-w-6xl mx-auto mt-8 flex justify-between items-center pb-8 border-t border-gray-200 pt-6">
             <button
               type="button"
-              onClick={() => onNavigate('marketplace')}
+              onClick={() => onNavigate('admin-dashboard')}
               className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-xs transition-colors"
             >
               Cancel

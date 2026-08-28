@@ -1,11 +1,12 @@
 import { api } from './client';
+import type { ShippingMethod } from '../../types';
 
 export type BackendOrder = {
   id: string;
   orderNumber: string;
   status: 'PENDING' | 'PAID' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   totalAmount: number;
-  shippingMethod: string;
+  shippingMethod: ShippingMethod;
   createAt: string;
   user?: { name?: string | null; email: string };
   item: Array<{
@@ -25,7 +26,7 @@ export const getOrders = async (page = 1, limit = 20) => {
   return data;
 };
 
-export const createOrder = async (cartID: string[], shippingMethod = 'WHATSAPP') => {
+export const createOrder = async (cartID: string[], shippingMethod: ShippingMethod) => {
   const { data } = await api.post<{ order: BackendOrder; message: string }>('/order/create', {
     cartID,
     shippingMethod,
@@ -39,4 +40,9 @@ export const updateOrderStatus = async (
 ) => {
   const { data } = await api.put(`/order/${id}/status`, undefined, { params: { status } });
   return data;
+};
+
+export const getOrderById = async (id: string) => {
+  const { data } = await api.get<{ order: BackendOrder }>(`/order/${id}`);
+  return data.order;
 };

@@ -35,6 +35,7 @@ export const CheckoutPage: React.FC = () => {
         onEditDelivery={openEditDelivery}
         onPlaceOrder={placeOrder}
         onNavigate={onNavigate}
+        onBack={() => navigate(-1)}
       />
 
       <EditDeliveryModal

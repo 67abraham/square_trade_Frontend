@@ -12,6 +12,7 @@ interface AdminDashboardViewProps {
   user: { name?: string | null; email: string; image?: string | null };
   onLogout: () => Promise<void>;
   onNavigate: (screen: ScreenType) => void;
+  onSelectOrder: (id: string) => void;
 }
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
@@ -21,7 +22,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   onUpdateOrderStatus,
   user,
   onLogout,
-  onNavigate
+  onNavigate,
+  onSelectOrder
 }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [, setActiveNav] = useState('Dashboard');
@@ -50,7 +52,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         {/* Logo */}
         <div className="px-5 mb-6 flex items-center justify-between">
           <button
-            onClick={() => onNavigate('marketplace')}
+            onClick={() => onNavigate('admin-dashboard')}
             className="flex items-center text-left cursor-pointer hover:opacity-90 transition-opacity"
             title="Return to Marketplace"
           >
@@ -241,7 +243,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                         return (
                           <tr
                             key={order.orderNumber}
-                            className="hover:bg-[#f2f4f6] transition-colors group cursor-pointer"
+                            onClick={() => onSelectOrder(order.id)} className="hover:bg-[#f2f4f6] transition-colors group cursor-pointer"
                           >
                             <td className="py-3.5 px-5 font-semibold text-[#0051d5] group-hover:underline">
                               {order.orderNumber}
@@ -255,7 +257,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                             <td className="py-3.5 px-5">
                               <select
                                 value={order.status}
-                                onChange={async e => { await onUpdateOrderStatus(order.id, e.target.value as Order['status']); }}
+                                onChange={async e => { e.stopPropagation(); await onUpdateOrderStatus(order.id, e.target.value as Order['status']); }} onClick={e => e.stopPropagation()}
                                 className={`px-2 py-1 rounded text-[11px] uppercase tracking-wider border border-transparent ${statusBadgeClass}`}
                               >
                                 <option value="PENDING">PENDING</option>

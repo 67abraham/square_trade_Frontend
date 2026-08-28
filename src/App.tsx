@@ -10,6 +10,7 @@ import { CreateProductPage } from './routes/CreateProductPage';
 import { AuthLoginPage } from './routes/AuthLoginPage';
 import { OrdersPage } from './routes/OrdersPage';
 import { ResetPasswordPage } from './routes/ResetPasswordPage';
+import { AdminOrderDetailsPage } from './routes/AdminOrderDetailsPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/all_products" element={<AdminAllProductsPage />} />
+        <Route path="/admin/orders/:id" element={<AdminOrderDetailsPage />} />
         <Route path="/admin/create-product" element={<CreateProductPage />} />
         <Route path="/login" element={<AuthLoginPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

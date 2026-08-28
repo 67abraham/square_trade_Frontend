@@ -23,7 +23,7 @@ export const ShopLayout: React.FC = () => {
   } = useAppContext();
 
   const onNavigate = (screen: ScreenType) => navigate(screenToPath[screen]);
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const cartCount = cartItems.length;
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -39,12 +39,14 @@ export interface Product {
 
 export interface CartItem { id?: string; product: Product; quantity: number; selectedColor?: string; selectedSize?: string; }
 
+export type ShippingMethod = 'Ship' | 'Flight';
+
 export interface Order {
   id: string;
   orderNumber: string;
   totalAmount: number;
   status: 'PENDING' | 'PAID' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  shippingMethod: string;
+  shippingMethod: ShippingMethod;
   date: string;
   customerName?: string | null;
   customerEmail?: string;

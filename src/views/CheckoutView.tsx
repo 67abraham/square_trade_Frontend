@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import type { CartItem, DeliveryInfo, ScreenType } from '../types';
+import type { CartItem, DeliveryInfo, ScreenType, ShippingMethod } from '../types';
 import { BrandLogo } from '../components/BrandLogo';
 import { 
   ArrowLeft, 
@@ -12,8 +12,9 @@ interface CheckoutViewProps {
   cartItems: CartItem[];
   deliveryInfo: DeliveryInfo;
   onEditDelivery: () => void;
-  onPlaceOrder: () => Promise<void>;
+  onPlaceOrder: (shippingMethod: ShippingMethod) => Promise<void>;
   onNavigate: (screen: ScreenType) => void;
+  onBack: () => void;
 }
 
 export const CheckoutView: React.FC<CheckoutViewProps> = ({
@@ -21,10 +22,12 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
   deliveryInfo,
   onEditDelivery,
   onPlaceOrder,
-  onNavigate
+  onNavigate,
+  onBack
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('Ship');
 
   const rawSubtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const totalAmount = rawSubtotal;
@@ -35,7 +38,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
     if (!cartItems.length || isSubmitting) return;
     setSubmitError(null);
     setIsSubmitting(true);
-    try { await onPlaceOrder(); }
+    try { await onPlaceOrder(shippingMethod); }
     catch (error) { setSubmitError(error instanceof Error ? error.message : 'Unable to place order'); }
     finally { setIsSubmitting(false); }
   };
@@ -46,7 +49,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
       <header className="bg-white border-b border-[#c6c6cd] py-4 px-6 md:px-12 sticky top-0 z-40 shadow-2xs">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <button
-            onClick={() => onNavigate('marketplace')}
+            onClick={onBack}
             className="flex items-center gap-3 text-left focus:outline-none cursor-pointer"
           >
             <BrandLogo variant="horizontal" size="md" />
@@ -56,7 +59,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
             id="checkout-back-to-cart-btn"
             whileHover={{ x: -2 }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => onNavigate('marketplace')}
+            onClick={onBack}
             className="flex items-center gap-2 text-[#0051d5] hover:text-[#003ea8] font-semibold text-sm transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -200,10 +203,13 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
               </h2>
 
               {/* Order Method */}
-              <h3 className="font-semibold text-sm text-[#191c1e] mt-4 mb-3">Order Method</h3>
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
-                After placing the order, use the generated Order Number to contact the admin on WhatsApp. No payment gateway is used at this stage.
+              <h3 className="font-semibold text-sm text-[#191c1e] mt-4 mb-3">Shipping Method</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {(['Ship', 'Flight'] as ShippingMethod[]).map(method => (
+                  <button key={method} type="button" onClick={() => setShippingMethod(method)} className={`rounded-lg border px-4 py-3 text-sm font-semibold transition ${shippingMethod === method ? 'border-[#0051d5] bg-blue-50 text-[#0051d5] ring-1 ring-[#0051d5]' : 'border-slate-300 bg-white text-slate-700 hover:border-[#0051d5]'}`}>{method}</button>
+                ))}
               </div>
+              <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">After placing the order, use the generated Order Number to contact the Supplier on WhatsApp.</div>
 
               {cartItems.some(item => item.product.status === 'NOT_AVAILABLE' || item.product.inStock === false) && (
                 <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
