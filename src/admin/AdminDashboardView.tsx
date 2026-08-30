@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import type { Order, ScreenType } from '../types';
+import type { Category, Order, ScreenType } from '../types';
 import { BrandLogo } from '../components/BrandLogo';
 import { Pagination } from '../components/Pagination';
 import { LayoutDashboard, Package, ShoppingCart, CreditCard, TrendingUp, AlertTriangle, PlusCircle, RotateCcw, FileCheck2, Truck, LogOut } from 'lucide-react';
+import { api } from '../lib/api/client';
 
 interface AdminDashboardViewProps {
   orders: Order[];
@@ -30,9 +31,60 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [orderCurrentPage, setOrderCurrentPage] = useState(1);
   const [orderPageSize, setOrderPageSize] = useState(5);
+  const [error, setError] = useState<string | null>(null)
+  const [category, setCategory] = useState('')
+  const [cate, setCate] = useState<Category[]>([])
+  const [loading, setLoading]=useState(false)
+  const [loadings, setLoadings]=useState(false)
+
+  const getCate = async()=>{
+    try {
+      const result= await api.get<Category[]>(`/category`);
+      if(result.data){
+        setCate(result.data)
+      }
+      
+    } catch (error) {
+      console.log(`Error: ${error}`)
+    }
+  }
+  const handleCate = async () => {
+  if (!category.trim()) return;
+  try {
+    setLoading(true);
+    setError(null);
+    const result = await api.post(`/category/create`, { name: category });
+    if (result.data?.name) {
+      setCategory('');       
+      await getCate();       
+    } else {
+      setError("Name already Exist");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    setError("Failed to create category");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const handleDel = async (id: string) => {
+  try {
+    setLoadings(true);
+    const result = await api.delete(`/category/del/${id}`);
+    if (result.data) {
+      setCate(prev => prev.filter(c => c.id !== id));
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoadings(false);
+  }
+};
 
   useEffect(() => {
     setOrderCurrentPage(1);
+    getCate();
   }, [filterStatus]);
 
   const filteredOrders = orders.filter(o => {
@@ -308,6 +360,45 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               </div>
               <button onClick={() => onNavigate('admin-create-product')} className="w-full mt-auto py-2.5 border border-[#c6c6cd] rounded-lg font-semibold text-xs text-[#191c1c] hover:bg-[#f2f4f6] hover:border-[#0051d5] transition-all">Create a product</button>
             </div>
+          </div>
+        </div>
+        <br />
+        <div>
+          <h1 className='poppins-bold'>Create Category</h1>
+          <div>
+                    <div className="mb-5">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Enter Category Name 
+                      </label>
+                      <input
+                        value={category}
+                        onKeyUp={(e) => {
+                          if (e.key === "Enter") {
+                            handleCate();
+                          }
+                        }}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full rounded-lg bg-white border-gray-300 shadow-xs focus:border-[#0066ff] focus:ring-[#0066ff] text-sm py-2.5 px-3 border"
+                        placeholder="e.g Bag"
+                        type="text"
+                      />
+                      {error && <p className="mb-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">{error}</p>}
+                      {loading && <p className="mt-1.5 text-xs text-gray-500">Loading...</p>}
+                    </div>
+                    <div className="bg-white border border-[#c6c6cd] rounded-xl p-5 shadow-xs flex flex-col">
+                      <h3 className="font-public-sans text-lg font-bold text-[#191c1e] mb-4">List of Category</h3>
+                      {loadings && <p className="mt-1.5 text-xs text-gray-500">Please wait...</p>}
+                      {cate?.map((data)=>(
+                        <div key={data.id} className="rounded-xl bg-slate-50 border border-slate-100 p-2 m-1">
+                          <p className="text-xs uppercase tracking-wider font-bold text-slate-500 font-[20px]">{data.name}</p>
+                          <p className="text-xs text-slate-500 mt-2">slug: {data.tag}</p>
+                          <button className="mt-1.5 text-xs text-blue-500 pointer" onClick={()=>handleDel(data.id)}>Delete</button>
+                        </div>
+
+
+                      ))}
+                    </div>
+                    
           </div>
         </div>
       </main>

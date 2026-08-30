@@ -7,12 +7,11 @@ import {
   Mail, 
   Eye, 
   EyeOff, 
-  ArrowRight, 
-  Globe 
+  ArrowRight
 } from 'lucide-react';
 
 interface AuthLoginViewProps {
-  onLoginSuccess: (role: 'admin' | 'buyer') => void | Promise<void>;
+  onLoginSuccess: (role: 'admin' | 'app_user') => void | Promise<void>;
   onNavigate: (screen: ScreenType) => void;
 }
 
@@ -48,7 +47,7 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
         ? await authClient.signUp(name.trim(), email.trim(), password)
         : await authClient.signIn(email.trim(), password, rememberMe);
       if (!session) { setSignupSent(true); setIsSignUp(false); return; }
-      await onLoginSuccess(session.user.role === 'ADMIN' ? 'admin' : 'buyer');
+      await onLoginSuccess(session.user.role === 'ADMIN' ? 'admin' : 'app_user');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign in');
     } finally {
@@ -89,7 +88,10 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
             onClick={() => void handleGoogle()}
             className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-2xs mb-6"
           >
-            <Globe className="w-4 h-4 text-blue-500 mr-2" />
+           
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-google w-4 h-4 mr-2" viewBox="0 0 16 16">
+            <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z"/>
+            </svg>
             <span>Continue with Google</span>
           </button>}
 
@@ -182,7 +184,7 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <span>{isResetMode ? 'Send Reset Link' : isSignUp ? 'Create Buyer Account' : 'Sign In to Sourcing Console'}</span>
+                  <span>{isResetMode ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Sign In'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

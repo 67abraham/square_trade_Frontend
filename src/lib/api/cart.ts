@@ -94,7 +94,7 @@ export const deleteCartItem = async (id: string) => {
   await api.delete('/cartItem/del', { data: { id } });
 };
 
-export const updateCartItem = async (id: string, quantity: number) => {
-  const { data } = await api.put(`/cartItem/${id}`, { quantity });
+export const updateCartItem = async (id: string, quantity: number, signal?: AbortSignal) => {
+  const { data } = await api.put(`/cartItem/${id}`, { quantity }, { signal });
   return data;
 };

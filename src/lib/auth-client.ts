@@ -45,7 +45,7 @@ export const authClient = {
       const { data } = await authApi.post<AuthSession | { user?: AuthUser }>('/sign-up/email', { name, email, password });
       if (data?.user && 'session' in data) return data;
       return null;
-    } catch (error) { throw new Error(errorMessage(error)); }
+    } catch (error) { throw new Error(errorMessage(error), { cause: error }); }
   },
 
   async signIn(email: string, password: string, rememberMe = true) {
@@ -57,7 +57,7 @@ export const authClient = {
       });
       return data;
     } catch (error) {
-      throw new Error(errorMessage(error));
+      throw new Error(errorMessage(error), { cause: error });
     }
   },
 
@@ -65,20 +65,20 @@ export const authClient = {
   async requestPasswordReset(email: string) {
     try {
       await authApi.post('/request-password-reset', { email, redirectTo: `${window.location.origin}/reset-password` });
-    } catch (error) { throw new Error(errorMessage(error)); }
+    } catch (error) { throw new Error(errorMessage(error), { cause: error }); }
   },
 
   async resetPassword(token: string, newPassword: string) {
     try {
       await authApi.post('/reset-password', { token, newPassword });
-    } catch (error) { throw new Error(errorMessage(error)); }
+    } catch (error) { throw new Error(errorMessage(error), { cause: error }); }
   },
 
   async signOut() {
     try {
       await authApi.post('/sign-out');
     } catch (error) {
-      throw new Error(errorMessage(error));
+      throw new Error(errorMessage(error), { cause: error });
     }
   },
 
@@ -88,8 +88,13 @@ export const authClient = {
         provider: 'google',
         callbackURL: window.location.origin,
       });
-      if (!data.url) throw new Error('Google sign-in could not be started');
+      if (!data.url) throw new Error('Google sign-in could not be started', { cause: new Error('Missing Google sign-in URL') });
       window.location.assign(data.url);
-    } catch (error) { throw new Error(errorMessage(error)); }
+    } catch (error) {
+      if (error instanceof Error && error.cause) {
+        throw error;
+      }
+      throw new Error(errorMessage(error), { cause: error });
+    }
   },
 };

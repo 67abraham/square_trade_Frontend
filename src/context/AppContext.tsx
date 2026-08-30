@@ -5,6 +5,7 @@ import { createCartItem, deleteCartItem, getCart, updateCartItem } from '../lib/
 import { createOrder, getOrders } from '../lib/api/orders';
 import { authClient, type AuthSession } from '../lib/auth-client';
 import { api } from '../lib/api/client';
+import { useDebouncedCartUpdate } from '../lib/useDebouncedCartUpdate';
 
 interface LastOrder { orderNumber: string; totalAmount: number; }
 
@@ -154,51 +155,92 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [refreshProducts, refreshCart, refreshOrders]);
 
-  const addToCart = async (product: Product, quantity = 1, selectedColor?: string, selectedSize?: string): Promise<void> => {
-    const safeQuantity = Math.max(product.minimumOrder ?? 1, quantity);
-    const existing = cartItems.find(item => item.product.id === product.id && item.selectedColor === selectedColor && item.selectedSize === selectedSize);
-    const optimistic = existing
-      ? cartItems.map(item => item === existing ? { ...item, quantity: item.quantity + safeQuantity } : item)
-      : [...cartItems, { product, quantity: safeQuantity, selectedColor, selectedSize }];
-    setCartItems(optimistic);
-    if (!session) { guestCartRef.current = optimistic; return; }
-    try {
-      await createCartItem(product.id, safeQuantity, selectedColor, selectedSize);
-      await refreshCart();
-    } catch (error) {
-      await refreshCart();
-      throw error;
-    }
-  };
 
-  const updateQuantity = async (item: CartItem, delta: number) => {
-    const minimum = item.product.minimumOrder ?? 1;
-    const quantity = Math.max(minimum, item.quantity + delta);
-    if (quantity === item.quantity) return;
-    if (!session || !item.id) {
-      setCartItems(prev => {
-        const next = prev.map(i => i === item ? { ...i, quantity } : i);
-        guestCartRef.current = next;
-        return next;
-      });
-      return;
-    }
-    await updateCartItem(item.id, quantity);
-    await refreshCart();
-  };
+const addToCart = useCallback(async (
+  product: Product,
+  quantity = 1,
+  selectedColor?: string,
+  selectedSize?: string
+): Promise<void> => {
+  const safeQuantity = Math.max(product.minimumOrder ?? 1, quantity);
 
-  const removeFromCart = async (item: CartItem) => {
-    if (!session || !item.id) {
-      setCartItems(prev => {
-        const next = prev.filter(i => i !== item);
-        guestCartRef.current = next;
-        return next;
-      });
-      return;
-    }
-    await deleteCartItem(item.id);
+  setCartItems(prev => {
+    const existing = prev.find(item =>
+      item.product.id === product.id &&
+      item.selectedColor === selectedColor &&
+      item.selectedSize === selectedSize
+    );
+
+    const next = existing
+      ? prev.map(item => item === existing ? { ...item, quantity: item.quantity + safeQuantity } : item)
+      : [...prev, { product, quantity: safeQuantity, selectedColor, selectedSize } as CartItem];
+
+    if (!session) guestCartRef.current = next;
+    return next;
+  });
+
+  if (!session) return;
+
+  try {
+    await createCartItem(product.id, safeQuantity, selectedColor, selectedSize);
     await refreshCart();
-  };
+  } catch (error) {
+    await refreshCart();
+    throw error;
+  }
+}, [session, refreshCart]);
+
+const { scheduleUpdate: scheduleCartUpdate, cancelUpdate: cancelCartUpdate } = useDebouncedCartUpdate(500);
+
+
+const updateQuantity = useCallback((item: CartItem, delta: number) => {
+  const minimum = item.product.minimumOrder ?? 1;
+  let finalQuantity: number | null = null;
+
+  setCartItems(prev => {
+    const current = prev.find(i => i.id === item.id);
+    if (!current) return prev; // item no longer in cart (e.g. removed meanwhile) — nothing to do
+
+    const quantity = Math.max(minimum, current.quantity + delta);
+    if (quantity === current.quantity) {
+      finalQuantity = null;
+      return prev;
+    }
+
+    finalQuantity = quantity;
+    const next = prev.map(i => i.id === item.id ? { ...i, quantity } : i);
+    if (!session || !item.id) guestCartRef.current = next;
+    return next;
+  });
+
+  if (!session || !item.id || finalQuantity === null) return;
+
+  scheduleCartUpdate(item.id, finalQuantity, async () => {
+    await refreshCart();
+  });
+}, [scheduleCartUpdate, refreshCart, session]);
+
+
+const removeFromCart = useCallback((item: CartItem) => {
+  if (!session || !item.id) {
+    setCartItems(prev => {
+      const next = prev.filter(i => i.id !== item.id);
+      guestCartRef.current = next;
+      return next;
+    });
+    return;
+  }
+
+  cancelCartUpdate(item.id);
+
+  const previousItems = cartItems;
+  setCartItems(prev => prev.filter(i => i.id !== item.id));
+
+  deleteCartItem(item.id).catch(async () => {
+    setCartItems(previousItems);
+    await refreshCart();
+  });
+},[session, cartItems, cancelCartUpdate, refreshCart]);
 
   const saveDeliveryInfo = async (info: DeliveryInfo) => {
     if (!session) throw new Error('Please sign in before saving delivery information');

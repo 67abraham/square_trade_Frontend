@@ -25,7 +25,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     0
   );
 
-  const totalCount = cartItems.reduce((acc, i) => acc + i.quantity, 0);
+  const totalCount = cartItems.length;
 
   return (
     <AnimatePresence>
