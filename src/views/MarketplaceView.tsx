@@ -334,23 +334,26 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
                         {/* Product Info */}
                         <div className="ml-4 flex flex-col justify-between flex-grow md:ml-0 md:mt-4">
                           <div>
-                            <div className="flex justify-between items-start gap-2">
+                            <div className="block justify-between items-start gap-2">
+                              <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-600">
+                                {product.category}
+                              </p>
                               <h3 className="font-semibold text-sm text-[#191c1e] line-clamp-2 group-hover:text-[#0051d5] transition-colors">
                                 {product.name}
                               </h3>
-                              <span className="font-bold text-[#191c1e] text-sm md:text-base whitespace-nowrap">
-                                ${product.price.toFixed(2)}
-                              </span>
                             </div>
 
                             <p className="text-xs text-[#76777d] mt-1 line-clamp-1">
                               {product.description}
-                              {product.brand}
                             </p>
-                            <p className="text-xs text-[#76777d] mt-1 line-clamp-1">
-
-                              {product.brand}
-                            </p>
+                           <div className="mt-3 flex items-baseline justify-between">
+                              <p className="text-lg font-bold text-slate-900">
+                                ${product.price.toFixed(2)}
+                              </p>
+                              {product.brand && (
+                                <p className="text-xs font-medium text-slate-400">{product.brand}</p>
+                              )}
+                           </div>
 
 
                           </div>

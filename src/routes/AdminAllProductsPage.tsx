@@ -7,6 +7,7 @@ import {
   deleteProduct,
   type CreateProductPayload,
   updateProduct,
+  updateProductStatus,
 } from "../lib/api/admin";
 import type { Product } from "../types";
 
@@ -332,11 +333,8 @@ export const AdminAllProductsPage: React.FC = () => {
     }
   };
 
-  const changeStatus = async (
-    product: Product,
-    status: "AVAILABLE" | "NOT_AVAILABLE",
-  ) => {
-    if (pending[product.id]) return; // already mid-action on this product — ignore repeat clicks
+  const changeStatus = async ( product: Product, status: "AVAILABLE" | "NOT_AVAILABLE",) => {
+    if (pending[product.id]) return; 
     const payload = productPayload(product, status);
     if (!payload) {
       setError("This product is missing required data and cannot be updated.");
@@ -345,7 +343,7 @@ export const AdminAllProductsPage: React.FC = () => {
     setError(null);
     setPending((prev) => ({ ...prev, [product.id]: "status" }));
     try {
-      await updateProduct(product.id, payload);
+      await updateProductStatus(product.id, payload);
       await refreshProducts();
     } catch (err) {
       setError(

@@ -24,6 +24,10 @@ export const updateProduct = async (id: string, payload: CreateProductPayload) =
   const { data } = await api.put(`/product/update/${id}`, payload);
   return data;
 };
+export const updateProductStatus = async (id: string, payload: CreateProductPayload) => {
+  const { data } = await api.put(`/product/updateStatus/${id}`, {status: payload.status});
+  return data;
+};
 
 export const deleteProduct = async (id: string) => {
   const { data } = await api.delete(`/product/del/${id}`);
