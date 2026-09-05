@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { CartItem, Category, DeliveryInfo, Order, Product } from '../types';
 import { getCategories, getProducts } from '../lib/api/catalog';
-import { createCartItem, deleteCartItem, getCart, updateCartItem } from '../lib/api/cart';
+import { createCartItem, deleteCartItem, getCart} from '../lib/api/cart';
 import { createOrder, getOrders } from '../lib/api/orders';
 import { authClient, type AuthSession } from '../lib/auth-client';
 import { api } from '../lib/api/client';
@@ -193,7 +193,7 @@ const addToCart = useCallback(async (
 const { scheduleUpdate: scheduleCartUpdate, cancelUpdate: cancelCartUpdate } = useDebouncedCartUpdate(500);
 
 
-const updateQuantity = useCallback((item: CartItem, delta: number) => {
+const updateQuantity = useCallback(async(item: CartItem, delta: number) => {
   const minimum = item.product.minimumOrder ?? 1;
   let finalQuantity: number | null = null;
 
@@ -221,7 +221,7 @@ const updateQuantity = useCallback((item: CartItem, delta: number) => {
 }, [scheduleCartUpdate, refreshCart, session]);
 
 
-const removeFromCart = useCallback((item: CartItem) => {
+const removeFromCart = useCallback(async(item: CartItem) => {
   if (!session || !item.id) {
     setCartItems(prev => {
       const next = prev.filter(i => i.id !== item.id);
