@@ -86,7 +86,7 @@ export const authClient = {
     try {
       const { data } = await authApi.post<{ url?: string }>('/sign-in/social', {
         provider: 'google',
-        callbackURL: "https://square-trade-frontend.vercel.app/",
+        callbackURL: window.location.origin,
       });
       if (!data.url) throw new Error('Google sign-in could not be started', { cause: new Error('Missing Google sign-in URL') });
       window.location.assign(data.url);
