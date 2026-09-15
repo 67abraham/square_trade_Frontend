@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const backendUrl = String(import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000').replace(/\/+$/, '').replace(/\/api$/, '');
+const backendUrl = String(import.meta.env.VITE_BACKEND_URL ?? 'https://ecommere-backend-real.onrender.com').replace(/\/+$/, '').replace(/\/api$/, '');
 
 export const api = axios.create({
   baseURL: `${backendUrl}/api`,
