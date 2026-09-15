@@ -33,7 +33,7 @@ const errorMessage = (error: unknown) => {
 export const authClient = {
   async getSession(): Promise<AuthSession | null> {
     try {
-      const { data } = await authApi.get<AuthSession | null>('/get-session');
+      const { data } = await authApi.get<AuthSession | null>('/get-session', {withCredentials: true});
       return data?.user ? data : null;
     } catch {
       return null;
