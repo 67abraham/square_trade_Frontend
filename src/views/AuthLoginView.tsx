@@ -68,7 +68,7 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
           <BrandLogo variant="full" theme="light" size="lg" />
         </div>
         <p className="mt-1 text-sm text-slate-300">
-          B2B Product Sourcing & Order Management
+          B2B Product Sourcing
         </p>
       </div>
 
