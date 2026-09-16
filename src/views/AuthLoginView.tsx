@@ -31,10 +31,10 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
   const [resetSent, setResetSent] = useState(false);
   const [signupSent, setSignupSent] = useState(false);
 
-  const handleGoogle = async () => {
-    setError(null);
-    try { await authClient.signInWithGoogle(); } catch (err) { setError(err instanceof Error ? err.message : 'Unable to start Google sign in'); }
-  };
+  // const handleGoogle = async () => {
+  //   setError(null);
+  //   try { await authClient.signInWithGoogle(); } catch (err) { setError(err instanceof Error ? err.message : 'Unable to start Google sign in'); }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +83,7 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
             </p>
           </div>
 
-          {!isResetMode && <button
+          {/* {!isResetMode && <button
             type="button"
             onClick={() => void handleGoogle()}
             className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-2xs mb-6"
@@ -93,9 +93,9 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
             <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z"/>
             </svg>
             <span>Continue with Google</span>
-          </button>}
+          </button>} */}
 
-          {!isResetMode && <div className="relative mb-6">
+          {/* {!isResetMode && <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200" />
             </div>
@@ -104,9 +104,10 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
                 Or sign in with email
               </span>
             </div>
-          </div>}
+          </div>} */}
 
-          {signupSent && <p className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700">Account created. Check your email to verify your account, then sign in.</p>}
+              {/* Check your email to verify your account, then sign in. */}
+          {signupSent && <p className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700">Account created.</p>} 
 
           {resetSent && <p className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700">If an account exists for that email, a password reset link has been sent.</p>}
 
@@ -120,7 +121,7 @@ export const AuthLoginView: React.FC<AuthLoginViewProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Work Email Address
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
