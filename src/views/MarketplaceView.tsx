@@ -135,7 +135,7 @@ export const MarketplaceView: React.FC<MarketplaceViewProps> = ({
               {featuredProduct ? `Featured: ${featuredProduct.name}` : 'Browse products available for your next order'}
             </h1>
             <p className="text-slate-300 text-xs md:text-sm mb-6 max-w-md hidden sm:block">
-              Live catalog products from the backend, with search, category filters, pricing and availability.
+              Live catalog products, with search, category filters, pricing and availability.
             </p>
             {featuredProduct && <div className="flex items-center gap-3">
               <motion.button id="hero-buy-now-btn" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => onSelectProduct(featuredProduct)} className="bg-[#0051d5] hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-all shadow-md">Buy Now</motion.button>

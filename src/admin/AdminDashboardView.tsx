@@ -148,7 +148,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 Dashboard Overview
               </h1>
               <p className="text-sm text-[#45464d] mt-1">
-                Live catalog and order metrics from the backend.
+                Live catalog and order metrics.
               </p>
             </div>
 
